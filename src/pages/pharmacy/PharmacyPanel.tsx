@@ -19,7 +19,10 @@ export function PharmacyPanel({ api, screen, notify }: PharmacyPanelProps) {
   const [qrPreview, setQrPreview] = useState<QrPreview | null>(null);
 
   useEffect(() => {
-    api.get<{ inventory: any[] }>("/pharmacy/inventory").then((data) => setInventory(data.inventory)).catch(() => setInventory([]));
+    api
+      .get<{ inventory: any[] }>("/pharmacy/inventory")
+      .then((data) => setInventory(data.inventory))
+      .catch(() => setInventory([]));
   }, [api]);
 
   if (screen === "inventory") {
@@ -33,7 +36,15 @@ export function PharmacyPanel({ api, screen, notify }: PharmacyPanelProps) {
         </div>
         <DataTable
           columns={["Medicine", "Quantity", "Batch", "Reorder level"]}
-          rows={(inventory.length ? inventory : demoMedicines.map((medicine) => ({ medicineName: medicine.brandName, quantity: 24, batchNumber: "B-2026", reorderLevel: 10 }))).map((item) => [
+          rows={(inventory.length
+            ? inventory
+            : demoMedicines.map((medicine) => ({
+                medicineName: medicine.brandName,
+                quantity: 24,
+                batchNumber: "B-2026",
+                reorderLevel: 10,
+              }))
+          ).map((item) => [
             item.medicineName,
             item.quantity,
             item.batchNumber || "-",
@@ -46,7 +57,9 @@ export function PharmacyPanel({ api, screen, notify }: PharmacyPanelProps) {
 
   const scan = async () => {
     try {
-      const response = await api.get<{ prescription: Prescription }>(`/pharmacy/prescriptions/scan/${token}`);
+      const response = await api.get<{ prescription: Prescription }>(
+        `/pharmacy/prescriptions/scan/${token}`,
+      );
       setPrescription(response.prescription);
     } catch (error) {
       notify(error instanceof ApiError ? error.message : "QR token not found");
@@ -57,7 +70,9 @@ export function PharmacyPanel({ api, screen, notify }: PharmacyPanelProps) {
   const dispense = async () => {
     if (!prescription) return;
     try {
-      await api.post(`/pharmacy/prescriptions/${prescription.id}/dispense`, { status: "completed" });
+      await api.post(`/pharmacy/prescriptions/${prescription.id}/dispense`, {
+        status: "completed",
+      });
       notify("Prescription marked as dispensed.");
     } catch (error) {
       notify(error instanceof ApiError ? error.message : "Dispense failed");
@@ -79,7 +94,11 @@ export function PharmacyPanel({ api, screen, notify }: PharmacyPanelProps) {
         </div>
         <div className="search-box">
           <QrCode size={18} />
-          <input value={token} onChange={(event) => setToken(event.target.value)} placeholder="Paste scanned QR token" />
+          <input
+            value={token}
+            onChange={(event) => setToken(event.target.value)}
+            placeholder="Paste scanned QR token"
+          />
         </div>
       </section>
       {prescription && (
@@ -87,7 +106,9 @@ export function PharmacyPanel({ api, screen, notify }: PharmacyPanelProps) {
           <div className="section-head">
             <div>
               <p className="eyebrow">Verification</p>
-              <h2>{prescription.patient?.user?.fullName || "Patient prescription"}</h2>
+              <h2>
+                {prescription.patient?.user?.fullName || "Patient prescription"}
+              </h2>
             </div>
             <button className="primary-button compact" onClick={dispense}>
               <ShieldCheck size={17} />
@@ -107,7 +128,9 @@ export function PharmacyPanel({ api, screen, notify }: PharmacyPanelProps) {
           />
         </section>
       )}
-      {qrPreview && <QrModal qr={qrPreview} onClose={() => setQrPreview(null)} />}
+      {qrPreview && (
+        <QrModal qr={qrPreview} onClose={() => setQrPreview(null)} />
+      )}
     </div>
   );
 }

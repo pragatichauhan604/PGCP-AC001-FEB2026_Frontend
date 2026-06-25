@@ -6,7 +6,11 @@ import { PatientPanel } from "./pages/patient/PatientPanel";
 import { PharmacyPanel } from "./pages/pharmacy/PharmacyPanel";
 import { createApi } from "./services/api";
 import { Screen, Session } from "./types";
-import { authModeFromPath, pathForScreen, screenFromPath } from "./utils/routes";
+import {
+  authModeFromPath,
+  pathForScreen,
+  screenFromPath,
+} from "./utils/routes";
 
 const storageKey = "dpcs-session";
 
@@ -15,7 +19,9 @@ export function App() {
     const saved = localStorage.getItem(storageKey);
     return saved ? JSON.parse(saved) : null;
   });
-  const [screen, setScreenState] = useState<Screen>(() => (session ? screenFromPath(session.user.role) : "dashboard"));
+  const [screen, setScreenState] = useState<Screen>(() =>
+    session ? screenFromPath(session.user.role) : "dashboard",
+  );
   const [toast, setToast] = useState("");
 
   const setScreen = (next: Screen) => {
@@ -28,7 +34,10 @@ export function App() {
     }
   };
 
-  const api = useMemo(() => createApi(() => session?.token || null), [session?.token]);
+  const api = useMemo(
+    () => createApi(() => session?.token || null),
+    [session?.token],
+  );
 
   const saveSession = (next: Session) => {
     setSession(next);
@@ -59,15 +68,41 @@ export function App() {
   }, [session]);
 
   if (!session) {
-    return <AuthPage api={api} initialMode={authModeFromPath()} onAuth={saveSession} notify={notify} />;
+    return (
+      <AuthPage
+        api={api}
+        initialMode={authModeFromPath()}
+        onAuth={saveSession}
+        notify={notify}
+      />
+    );
   }
 
   return (
-    <AppLayout session={session} screen={screen} onNavigate={setScreen} onLogout={logout} toast={toast}>
-      {session.user.role === "doctor" && <DoctorPanel api={api} screen={screen} setScreen={setScreen} notify={notify} />}
-      {session.user.role === "patient" && <PatientPanel api={api} screen={screen} notify={notify} />}
-      {session.user.role === "pharmacist" && <PharmacyPanel api={api} screen={screen} notify={notify} />}
-      {session.user.role === "admin" && <AdminPanel api={api} screen={screen} notify={notify} />}
+    <AppLayout
+      session={session}
+      screen={screen}
+      onNavigate={setScreen}
+      onLogout={logout}
+      toast={toast}
+    >
+      {session.user.role === "doctor" && (
+        <DoctorPanel
+          api={api}
+          screen={screen}
+          setScreen={setScreen}
+          notify={notify}
+        />
+      )}
+      {session.user.role === "patient" && (
+        <PatientPanel api={api} screen={screen} notify={notify} />
+      )}
+      {session.user.role === "pharmacist" && (
+        <PharmacyPanel api={api} screen={screen} notify={notify} />
+      )}
+      {session.user.role === "admin" && (
+        <AdminPanel api={api} screen={screen} notify={notify} />
+      )}
     </AppLayout>
   );
 }
