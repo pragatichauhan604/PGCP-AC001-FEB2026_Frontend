@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { AppLayout } from "./layouts/AppLayout";
 import { AuthPage } from "./pages/AuthPage";
 import { AdminPanel } from "./pages/admin/AdminPanel";
-import { DoctorPanel } from "./pages/doctor/DoctorPanel";
 import { PatientPanel } from "./pages/patient/PatientPanel";
 import { PharmacyPanel } from "./pages/pharmacy/PharmacyPanel";
 import { createApi } from "./services/api";

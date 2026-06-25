@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Activity, Pill, Stethoscope, Store, Users } from "lucide-react";
-import { NotificationList } from "../../components/notifications/NotificationList";
 import { DataTable } from "../../components/ui/DataTable";
 import { Field } from "../../components/ui/Field";
 import { StatCard } from "../../components/ui/StatCard";

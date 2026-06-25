@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { QrCode, ShieldCheck } from "lucide-react";
 import { PrescriptionList } from "../../components/prescriptions/PrescriptionList";
-import { QrModal } from "../../components/qr/QrModal";
 import { DataTable } from "../../components/ui/DataTable";
 import { demoMedicines, demoPrescriptions } from "../../data/mockData";
 import { ApiClient, ApiError } from "../../services/api";

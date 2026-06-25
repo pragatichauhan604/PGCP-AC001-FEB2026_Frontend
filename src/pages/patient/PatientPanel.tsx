@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { ClipboardPlus, Pill, QrCode, Store, Stethoscope } from "lucide-react";
 import { PrescriptionList } from "../../components/prescriptions/PrescriptionList";
-import { QrModal } from "../../components/qr/QrModal";
 import { StatCard } from "../../components/ui/StatCard";
 import { demoPharmacies, demoPrescriptions } from "../../data/mockData";
 import { ApiClient, ApiError } from "../../services/api";
