@@ -20,8 +20,14 @@ export function PatientPanel({ api, screen, notify }: PatientPanelProps) {
   const [qrPreview, setQrPreview] = useState<QrPreview | null>(null);
 
   useEffect(() => {
-    api.get<{ prescriptions: Prescription[] }>("/patient/prescriptions").then((data) => setPrescriptions(data.prescriptions)).catch(() => setPrescriptions(demoPrescriptions));
-    api.get<{ doctors: any[] }>("/patient/doctors").then((data) => setDoctors(data.doctors)).catch(() => setDoctors([]));
+    api
+      .get<{ prescriptions: Prescription[] }>("/patient/prescriptions")
+      .then((data) => setPrescriptions(data.prescriptions))
+      .catch(() => setPrescriptions(demoPrescriptions));
+    api
+      .get<{ doctors: any[] }>("/patient/doctors")
+      .then((data) => setDoctors(data.doctors))
+      .catch(() => setDoctors([]));
   }, [api]);
 
   if (screen === "doctors") return <DoctorListPanel api={api} />;
@@ -30,10 +36,28 @@ export function PatientPanel({ api, screen, notify }: PatientPanelProps) {
   return (
     <div className="content-stack">
       <div className="stats-grid">
-        <StatCard icon={ClipboardPlus} label="Active prescriptions" value={prescriptions.filter((item) => item.status === "active").length || 1} />
-        <StatCard icon={QrCode} label="QR codes" value={prescriptions.length || 1} />
-        <StatCard icon={Stethoscope} label="Available doctors" value={doctors.length} />
-        <StatCard icon={Store} label="Nearby pharmacies" value={demoPharmacies.length} />
+        <StatCard
+          icon={ClipboardPlus}
+          label="Active prescriptions"
+          value={
+            prescriptions.filter((item) => item.status === "active").length || 1
+          }
+        />
+        <StatCard
+          icon={QrCode}
+          label="QR codes"
+          value={prescriptions.length || 1}
+        />
+        <StatCard
+          icon={Stethoscope}
+          label="Available doctors"
+          value={doctors.length}
+        />
+        <StatCard
+          icon={Store}
+          label="Nearby pharmacies"
+          value={demoPharmacies.length}
+        />
       </div>
 
       <section className="section-panel">
@@ -49,13 +73,21 @@ export function PatientPanel({ api, screen, notify }: PatientPanelProps) {
             .map((prescription) => (
               <article className="treatment-card" key={prescription.id}>
                 <div>
-                  <span className="status active">{prescription.disease || "General treatment"}</span>
+                  <span className="status active">
+                    {prescription.disease || "General treatment"}
+                  </span>
                   <h3>{prescription.doctor?.user?.fullName || "Doctor"}</h3>
-                  <p>{prescription.doctor?.specialization || prescription.doctor?.hospitalName || "Treatment plan"}</p>
+                  <p>
+                    {prescription.doctor?.specialization ||
+                      prescription.doctor?.hospitalName ||
+                      "Treatment plan"}
+                  </p>
                 </div>
                 <div className="medicine-list">
                   {prescription.items.map((item, index) => (
-                    <div key={`${prescription.id}-${item.medicineName}-${index}`}>
+                    <div
+                      key={`${prescription.id}-${item.medicineName}-${index}`}
+                    >
                       <Pill size={16} />
                       <span>{item.medicineName}</span>
                       <small>
@@ -80,9 +112,14 @@ export function PatientPanel({ api, screen, notify }: PatientPanelProps) {
           {doctors.map((doctor) => (
             <article className="doctor-card" key={doctor.id}>
               {doctor.user?.profilePhoto ? (
-                <img src={doctor.user.profilePhoto} alt={doctor.user.fullName} />
+                <img
+                  src={doctor.user.profilePhoto}
+                  alt={doctor.user.fullName}
+                />
               ) : (
-                <div className="doctor-avatar">{doctor.user?.fullName?.slice(0, 1) || "D"}</div>
+                <div className="doctor-avatar">
+                  {doctor.user?.fullName?.slice(0, 1) || "D"}
+                </div>
               )}
               <div>
                 <h3>{doctor.user?.fullName}</h3>
@@ -91,7 +128,11 @@ export function PatientPanel({ api, screen, notify }: PatientPanelProps) {
               </div>
             </article>
           ))}
-          {!doctors.length && <p className="empty-state">No approved doctors are available yet.</p>}
+          {!doctors.length && (
+            <p className="empty-state">
+              No approved doctors are available yet.
+            </p>
+          )}
         </div>
       </section>
 
@@ -100,14 +141,20 @@ export function PatientPanel({ api, screen, notify }: PatientPanelProps) {
         audience="patient"
         onShowQr={async (prescription) => {
           try {
-            const response = await api.get<{ prescription: Prescription }>(`/patient/prescriptions/${prescription.id}/qr`);
+            const response = await api.get<{ prescription: Prescription }>(
+              `/patient/prescriptions/${prescription.id}/qr`,
+            );
             setQrPreview({
               title: `Prescription ${response.prescription.id}`,
               image: response.prescription.qrCode,
               token: response.prescription.qrCodeToken,
             });
           } catch (error) {
-            notify(error instanceof ApiError ? error.message : "QR code could not be opened");
+            notify(
+              error instanceof ApiError
+                ? error.message
+                : "QR code could not be opened",
+            );
           }
         }}
         onRefill={async (id) => {
@@ -115,11 +162,17 @@ export function PatientPanel({ api, screen, notify }: PatientPanelProps) {
             await api.post(`/patient/prescriptions/${id}/refill-request`);
             notify("Refill request sent to the doctor.");
           } catch (error) {
-            notify(error instanceof ApiError ? error.message : "Refill request could not be sent");
+            notify(
+              error instanceof ApiError
+                ? error.message
+                : "Refill request could not be sent",
+            );
           }
         }}
       />
-      {qrPreview && <QrModal qr={qrPreview} onClose={() => setQrPreview(null)} />}
+      {qrPreview && (
+        <QrModal qr={qrPreview} onClose={() => setQrPreview(null)} />
+      )}
     </div>
   );
 }
